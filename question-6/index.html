@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Delayed Multi Greeting</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+        #greeting-container {
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-radius: 10px;
+            width: 50%;
+            margin: 40px auto;
+        }
+        .greeting-message {
+            padding: 10px;
+            border-bottom: 1px solid #ccc;
+        }
+        .greeting-message:last-child {
+            border-bottom: none;
+        }
+    </style>
+</head>
+<body>
+    <h1>Delayed Multi Greeting</h1>
+    <div id="greeting-container"></div>
+    <script>
+        async function delayedMultiGreeting(messages) {
+            for (const { message, delay } of messages) {
+                await new Promise(resolve => setTimeout(resolve, delay));
+                const greetingMessage = document.createElement("div");
+                greetingMessage.className = "greeting-message";
+                greetingMessage.textContent = message;
+                document.getElementById("greeting-container").appendChild(greetingMessage);
+            }
+        }
+
+        const messages = [
+            { message: "Hello, world!", delay: 2000 },
+            { message: "How are you?", delay: 1000 },
+            { message: "Goodbye!", delay: 3000 }
+        ];
+
+        delayedMultiGreeting(messages);
+    </script>
+</body>
+</html>

@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Repeated Logger</title>
+    <style>
+        /* Add some basic CSS to make the output more readable */
+        body {
+            font-family: Arial, sans-serif;
+        }
+        #log-container {
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-radius: 10px;
+            width: 50%;
+            margin: 40px auto;
+        }
+        .log-message {
+            padding: 10px;
+            border-bottom: 1px solid #ccc;
+        }
+        .log-message:last-child {
+            border-bottom: none;
+        }
+    </style>
+</head>
+<body>
+    <h1>Smart Repeated Logger</h1>
+    <div id="log-container"></div>
+    <script>
+        function smartRepeatedLogger(message, interval, duration) {
+            let timerId = null;
+            let startTime = null;
+            let paused = false;
+            let logContainer = document.getElementById("log-container");
+
+            function startLogging() {
+                startTime = Date.now();
+                timerId = setInterval(() => {
+                    if (!paused && Date.now() - startTime < duration) {
+                        const logMessage = document.createElement("div");
+                        logMessage.className = "log-message";
+                        logMessage.textContent = message;
+                        logContainer.appendChild(logMessage);
+                    } else {
+                        clearInterval(timerId);
+                    }
+                }, interval);
+            }
+
+            startLogging();
+
+            return {
+                pause: () => {
+                    paused = true;
+                },
+                resume: () => {
+                    paused = false;
+                    startLogging();
+                }
+            };
+        }
+
+        const logger = smartRepeatedLogger("Logging...", 1000, 10000);
+        setTimeout(() => logger.pause(), 3000); // Pauses after 3 seconds
+        setTimeout(() => logger.resume(), 6000); // Resumes after 6 seconds
+    </script>
+</body>
+</html>

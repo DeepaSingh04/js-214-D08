@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Analyze Product Data</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+        #product-container {
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-radius: 10px;
+            width: 50%;
+            margin: 40px auto;
+        }
+        .product-message {
+            padding: 10px;
+            border-bottom: 1px solid #ccc;
+        }
+        .product-message:last-child {
+            border-bottom: none;
+        }
+    </style>
+</head>
+<body>
+    <h1>Analyze Product Data</h1>
+    <div id="product-container"></div>
+    <script>
+        class ProductAnalyzer {
+            constructor() {
+                this.productData = [];
+                this.filteredResults = [];
+            }
+
+            async fetchProductData() {
+                try {
+                    const response = await fetch('https://fakestoreapi.com/products');
+                    this.productData = await response.json();
+                    this.displayFirstFiveProducts();
+                } catch (error) {
+                    console.error('Error fetching product data:', error);
+                }
+            }
+
+            displayFirstFiveProducts() {
+                const firstFiveProducts = this.productData.slice(0, 5);
+                const productContainer = document.getElementById("product-container");
+                firstFiveProducts.forEach(product => {
+                    const productMessage = document.createElement("div");
+                    productMessage.className = "product-message";
+                    productMessage.textContent = `ID: ${product.id}, Title: ${product.title}, Price: $${product.price}`;
+                    productContainer.appendChild(productMessage);
+                });
+            }
+
+            filterProductsByCategory(category) {
+                const filteredProducts = this.productData.filter(product => product.category === category);
+                this.logFilteredResults(filteredProducts, category);
+                this.filteredResults.push({ timestamp: new Date().toLocaleString(), category, products: filteredProducts });
+            }
+
+            logFilteredResults(products, category) {
+                console.log(`Filtered products by category: ${category}`);
+                products.forEach(product => console.log(`ID: ${product.id}, Title: ${product.title}, Price: $${product.price}`));
+            }
+
+            findProductWithHighestPrice() {
+                const highestPricedProduct = this.productData.reduce((max, current) => max.price > current.price ? max : current);
+                console.log(`Product with highest price: ID: ${highestPricedProduct.id}, Title: ${highestPricedProduct.title}, Price: $${highestPricedProduct.price}`);
+            }
+
+            calculateAveragePrice() {
+                const totalPrice = this.productData.reduce((sum, product) => sum + product.price, 0);
+                const averagePrice = totalPrice / this.productData.length;
+                console.log(`Average price of all products: $${averagePrice.toFixed(2)}`);
+            }
+
+            displayFilteredResultsHistory() {
+                console.log('Filtered results history:');
+                this.filteredResults.forEach(result => console.log(`Timestamp: ${result.timestamp}, Category: ${result.category}, Products: ${result.products.length}`));
+            }
+        }
+
+        const analyzer = new ProductAnalyzer();
+        analyzer.fetchProductData().then(() => {
+            analyzer.filterProductsByCategory('electronics');
+            analyzer.findProductWithHighestPrice();
+            analyzer.calculateAveragePrice();
+            analyzer.displayFilteredResultsHistory();
+        });
+    </script>
+</body>
+</html>
